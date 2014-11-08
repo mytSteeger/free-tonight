@@ -7,6 +7,22 @@ exports.tags = function(req, res) {
 	});
 }
 
+exports.addTag = function(req, res) {
+	req.checkParams('tagname', 'invalid tagname!').notEmpty();
+	var errors = req.validationErrors();
+
+	if (errors) {
+		return res.send(400, errors);
+	}
+
+	db.getAllTags(function(error, objects) {
+		if (objects.indexOf(req.params.tagname) == -1) {
+			//create new
+		}
+		//return tag + tagId
+	});
+}
+
 exports.user = function(req, res) {
 	req.checkParams('token', 'Invalid token').notEmpty();
 	var errors = req.validationErrors();

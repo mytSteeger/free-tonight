@@ -32,7 +32,12 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/api/', routes.index);
+
+//TAGS
 app.get('/api/tags',api.tags);
+app.post('/api/:tagname',api.addTag);
+
+//USER 
 app.get('/api/:token',api.user);
 app.post('/api/:token/tags',api.postTagsForUser);
 

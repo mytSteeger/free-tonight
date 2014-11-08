@@ -15,7 +15,10 @@ exports.getAllTags = function(callback) {
 			return callback(err, undefined);
 		}
 		var tags = rows.map(function(argument) {
-			return argument.tagname;
+			return {
+				tagID: argument.tagID,
+				tagname: argument.tagname
+			};
 		});
 		console.log(tags);
 
