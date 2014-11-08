@@ -69,7 +69,13 @@ exports.addUser = function(user, callback) {
 }
 
 exports.tagsAndFollowerForUser = function(token, callback) {
-	callback(undefined, {
-		foo: "bar"
-	});
+	callback(undefined, [{
+		tagID: 3,
+		tagname: "foo",
+		token: ["tokenFOO1", "tokenBAR2"]
+	}, {
+		tagID: 2,
+		tagname: "bar",
+		token: ["tokenFOO1", "tokenBAR2","tokenFOO12", "tokenBAR22"]
+	}]);
 }

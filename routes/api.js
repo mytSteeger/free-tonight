@@ -15,12 +15,7 @@ exports.addTag = function(req, res) {
 		return res.send(400, errors);
 	}
 
-	db.getAllTags(function(error, objects) {
-		if (objects.indexOf(req.params.tagname) == -1) {
-			//create new
-		}
-		//return tag + tagId
-	});
+	//TODO check if tag is existend
 }
 
 exports.user = function(req, res) {
