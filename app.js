@@ -9,6 +9,8 @@ var api = require('./routes/api');
 var http = require('http');
 var path = require('path');
 
+var expressValidator = require('express-validator');
+
 var app = express();
 
 // all environments
@@ -20,6 +22,7 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
+app.use(expressValidator());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -30,6 +33,8 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/tags',api.tags);
+app.get('/:token',api.user);
+app.post('/:token/tags',api.postTagsForUser);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
