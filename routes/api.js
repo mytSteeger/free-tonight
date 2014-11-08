@@ -8,7 +8,10 @@ exports.tags = function(req, res) {
 }
 
 exports.user = function(req, res) {
-	res.send(204);
+	if (req.params.token === undefined) {
+		return res.send(400,'token is missing.');
+	}
+	return res.send(204);
 }
 
 exports.postTagsForUser = function(req, res) {

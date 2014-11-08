@@ -31,10 +31,10 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
-app.get('/tags',api.tags);
-app.get('/:token',api.user);
-app.post('/:token/tags',api.postTagsForUser);
+app.get('/api/', routes.index);
+app.get('/api/tags',api.tags);
+app.get('/api/:token',api.user);
+app.post('/api/:token/tags',api.postTagsForUser);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
