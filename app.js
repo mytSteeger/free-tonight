@@ -40,7 +40,11 @@ app.post('/api/:tagname',api.addTag);
 //USER 
 app.get('/api/:token',api.user);
 app.post('/api/:token/tags',api.postTagsForUser);
+app.del('/api/:token',api.removeUser);
 
+//MESSAGES 
+// app.get('/api/messages/:tagID',api.getAllMessages);
+// app.post('/api/messages/:tagID',api.postNewMessage);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

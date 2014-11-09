@@ -110,7 +110,45 @@ exports.tagsAndFollowerForUser = function(token, callback) {
 				});
 			}
 		}
-		
 		return callback(undefined, resultArray);
+	});
+}
+
+exports.removeUser = function(token, callback) {
+	var queryString = squel.select().field('userID').from('users').where('token = ?', token).toString();
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) return callback(err);
+		if (rows.length == 0) {
+			return callback({
+				errorCode: '404'
+			});
+		}
+		var userID = rows[0].userID;
+		queryString = squel.delete().from('users').where('userID = ?', userID).toString();
+		connection.query(queryString, function(err, rows, fields) {
+			if (err) return callback(err);
+			queryString = squel.delete().from('interests').where('userID = ?', userID).toString();
+			connection.query(queryString, function(err, rows, fields) {
+				callback(err, rows);
+			});
+		});
+	});
+}
+
+exports.getMessages = function(tagID, callback) {
+	var queryString = squel.select().from("messages").where("tagID = ?", tagID).toString();
+	connection.query(queryString, function(err, rows, fields) {
+		callback(err, rows);
+	});
+}
+
+exports.addMessage = function(userID, tagID, message, callback) {
+	var queryString = squel.insert().into("messages").setFieldsRows([{
+		messageID: null,
+		tagID: tagID,
+		userID: userID
+	}]).toString();
+	connection.query(queryString, function(err, rows, fields) {
+		callback(err);
 	});
 }

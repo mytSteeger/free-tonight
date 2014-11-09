@@ -94,6 +94,42 @@ exports.postTagsForUser = function(req, res) {
 	});
 }
 
+exports.removeUser = function(req, res) {
+	req.checkParams('token', 'Invalid token').notEmpty();
+	var errors = req.validationErrors();
+	if (errors) return res.send(400, errors);
+	db.removeUser(req.params.token, function(err) {
+		if (err) {
+			if (err.errorCode == 404) {
+				return res.send(404);
+			}
+			return res.send(500, err);
+		}
+		return res.send(204);
+	});
+}
+
+exports.getAllMessages = function(req, res) {
+	req.checkParams('tagID', 'Invalid tagID').notEmpty();
+	var errors = req.validationErrors();
+	if (errors) {
+		return res.send(400, errors);
+	}
+	db.getMessages(req.params.tagID, function(err, messages) {
+		if (err) return res.send(500, err);
+		res.send(200, messages);
+	});
+}
+
+exports.postNewMessage = function(req, res) {
+	// req.checkParams('tagID', 'Invalid tagID').notEmpty();
+	// req.checkBody('message',).notEmpty;
+	// var errors = req.validationErrors();
+	// if (errors) {
+	// 	return res.send(400, errors);
+	// }
+}
+
 function searchForMatches(user) {
 	db.tagsAndFollowerForUser(user.token, function(err, objects) {
 		if (err) console.error(err);
