@@ -88,7 +88,7 @@ exports.postTagsForUser = function(req, res) {
 			if (err) {
 				return res.send(500);
 			}
-			searchForMatches(user);
+			searchMatchesForAllUsers();
 			return res.send(204);
 		});
 	});
@@ -130,10 +130,23 @@ exports.postNewMessage = function(req, res) {
 	// }
 }
 
-function searchForMatches(user) {
-	db.tagsAndFollowerForUser(user.token, function(err, objects) {
-		if (err) console.error(err);
-		push.sendTagToUser(user, objects);
+function searchMatchesForAllUsers() {
+	db.getAllUser(function(err, users) {
+		if (!err) {
+			users.forEach(function(user) {
+				db.tagsAndFollowerForUser(user.token, function(err, objects) {
+					if (err) console.error(err);
+					var shouldSendPush = false;
+					objects.forEach(function(object) {
+						shouldSendPush = (shouldSendPush) || (object.members.length >= 2)
+					});
+					if (shouldSendPush) {
+						console.log("sending push");
+						push.sendTagToUser(user, objects);
+					}
+				});
+			});
+		}
 	});
 }
 

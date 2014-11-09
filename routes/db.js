@@ -53,6 +53,13 @@ exports.checkIfUserIsNew = function(token, callback) {
 	});
 }
 
+exports.getAllUser = function(callback) {
+	var queryString = squel.select().from('users').toString();
+	connection.query(queryString, function(err, rows, fields) {
+		callback(err, rows);
+	});
+}
+
 exports.addUser = function(user, callback) {
 	var queryString = squel.insert()
 		.into("users")
