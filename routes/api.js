@@ -76,10 +76,11 @@ exports.postTagsForUser = function(req, res) {
 		if (!isNew) {
 			return res.send(400, 'user is already free tonight!');
 		}
+
 		var user = {
 			'token': req.params.token,
 			'alias': req.body.alias,
-			'platform': req.body.platform,
+			'platform': req.body.platform.toUpperCase(),
 			'tags': req.body.tags
 		};
 		return db.addUser(user, function(err) {
