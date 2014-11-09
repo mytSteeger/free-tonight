@@ -26,6 +26,31 @@ exports.getAllTags = function(callback) {
 	});
 }
 
+exports.getTagForName = function(tagname, callback) {
+	var queryString = squel.select().from("tags").where("tagname = ?", tagname).toString();
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) {
+			return callback(err, undefined);
+		}
+		return callback(undefined, rows[0]);
+	});
+}
+
+exports.createTag = function(tagName, callback) {
+	var queryString = squel.insert()
+		.into("tags")
+		.setFieldsRows([{
+			tagID: null,
+			tagname: tagName
+		}]).toString();
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) {
+			return callback(err, undefined);
+		}
+		return callback(undefined, rows.insertId);
+	});
+}
+
 exports.checkIfUserIsNew = function(token, callback) {
 	var queryString = squel.select().from('users').where('token = ?', token).toString();
 	connection.query(queryString, function(err, rows, fields) {
@@ -68,6 +93,16 @@ exports.addUser = function(user, callback) {
 	});
 }
 
+exports.getTagIdNameAndCount = function(callback) {
+	var queryString = "SELECT A.*, B.tagname FROM (SELECT tagID, count(*) count FROM `interests` GROUP BY tagID) A INNER JOIN tags B ON A.tagID=B.tagID";
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) {
+			return callback(err, undefined);
+		}
+		return callback(undefined, rows);
+	});
+}
+
 exports.tagsAndFollowerForUser = function(token, callback) {
 	callback(undefined, [{
 		tagID: 3,
@@ -76,6 +111,6 @@ exports.tagsAndFollowerForUser = function(token, callback) {
 	}, {
 		tagID: 2,
 		tagname: "bar",
-		token: ["tokenFOO1", "tokenBAR2","tokenFOO12", "tokenBAR22"]
+		token: ["tokenFOO1", "tokenBAR2", "tokenFOO12", "tokenBAR22"]
 	}]);
 }

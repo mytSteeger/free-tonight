@@ -15,7 +15,23 @@ exports.addTag = function(req, res) {
 		return res.send(400, errors);
 	}
 
-	//TODO check if tag is existend
+	db.getTagForName(req.params.tagname, function(err, tagObj) {
+		if (err) {
+			return res.send(500, err);
+		}
+		if (tagObj) {
+			return res.send(200, tagObj);
+		}
+		db.createTag(req.params.tagname, function(err, tagId) {
+			if (err) {
+				return res.send(500, err);
+			}
+			return res.send(200, {
+				tagID: tagId,
+				tagname: req.params.tagname
+			});
+		});
+	});
 }
 
 exports.user = function(req, res) {
@@ -70,8 +86,19 @@ exports.postTagsForUser = function(req, res) {
 			if (err) {
 				return res.send(500);
 			}
+			searchForMatches();
 			return res.send(204);
 		});
+	});
+}
+
+function searchForMatches() {
+	db.getTagIdNameAndCount(function(err, objects) {
+		if (err) {
+			console.error(err);
+		}
+		console.log("found some matches!!!");
+		console.log(objects);
 	});
 }
 
