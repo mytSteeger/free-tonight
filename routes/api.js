@@ -88,43 +88,16 @@ exports.postTagsForUser = function(req, res) {
 			if (err) {
 				return res.send(500);
 			}
-			searchForMatches(userId, tags);
+			searchForMatches(user);
 			return res.send(204);
 		});
 	});
 }
 
-function searchForMatches(userId, tags) {
-	db.getTagIdNameAndCount(function(err, objects) {
-		if (err) {
-			console.error(err);
-		}
-		var userMatches = [];
-		objects.forEach(function(object) {
-			if (tags.indexOf(object.tagname) != -1) {
-				userMatches.push(object);
-			}
-		});
-		push.sendTagToUser(userId, userMatches);
-	});
-}
-
-exports.matches = function(req, res) {
-	req.checkQuery('tags', 'send at least 1 tag!').notEmpty();
-	var errors = req.validationErrors();
-
-	if (errors) {
-		return res.send(400, errors);
-	}
-
-	db.getTagIdNameAndCount(function(err, objects) {
-		if (err) {
-			return res.send(500, err);
-		}
-		var result = objects.filter(function(object) {
-			return req.query.tags.indexOf(object.tagname) != -1;
-		});
-		return res.send(200, result);
+function searchForMatches(user) {
+	db.tagsAndFollowerForUser(user.token, function(err, objects) {
+		if (err) console.error(err);
+		push.sendTagToUser(user, objects);
 	});
 }
 

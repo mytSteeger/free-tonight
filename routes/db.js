@@ -85,24 +85,31 @@ exports.addUser = function(user, callback) {
 	});
 }
 
-exports.getTagIdNameAndCount = function(callback) {
-	var queryString = "SELECT A.*, B.tagname FROM (SELECT tagID, count(*) count FROM `interests` GROUP BY tagID) A INNER JOIN tags B ON A.tagID=B.tagID";
-	connection.query(queryString, function(err, rows, fields) {
-		if (err) {
-			return callback(err, undefined);
-		}
-		return callback(undefined, rows);
-	});
-}
-
 exports.tagsAndFollowerForUser = function(token, callback) {
-	callback(undefined, [{
-		tagID: 3,
-		tagname: "foo",
-		token: ["tokenFOO1", "tokenBAR2"]
-	}, {
-		tagID: 2,
-		tagname: "bar",
-		token: ["tokenFOO1", "tokenBAR2", "tokenFOO12", "tokenBAR22"]
-	}]);
+	var queryString = "SELECT I.tagID, I.userID, U.alias, T.tagname FROM interests I JOIN users U ON (I.userID = U.userID) JOIN tags T ON (I.tagID = T.tagID) WHERE I.tagID IN ( SELECT I.tagID FROM interests I WHERE (I.userID = (SELECT U.userID FROM users U WHERE (U.token = '" + token + "')))) ORDER BY I.tagID";
+	connection.query(queryString, function(err, rows, fields) {
+		if (err) return callback(err, undefined);
+		var results = {};
+		rows.forEach(function(row) {
+			if (results[row.tagID] === undefined) {
+				results[row.tagID] = {
+					tagname: row.tagname,
+					members: [row.alias]
+				};
+			} else {
+				results[row.tagID].members.push(row.alias);
+			}
+		});
+		var resultArray = [];
+		for (var property in results) {
+			if (results.hasOwnProperty(property)) {
+				resultArray.push({
+					tagID: property,
+					tagname: results[property].tagname,
+					members: results[property].members
+				});
+			}
+		}
+		return callback(undefined, resultArray);
+	});
 }

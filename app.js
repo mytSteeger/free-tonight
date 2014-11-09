@@ -33,9 +33,6 @@ if ('development' == app.get('env')) {
 
 app.get('/api/', routes.index);
 
-//MATCHES
-app.get('/api/matches',api.matches);
-
 //TAGS
 app.get('/api/tags',api.tags);
 app.post('/api/:tagname',api.addTag);
