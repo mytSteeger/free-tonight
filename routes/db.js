@@ -9,7 +9,7 @@ var connection = mysql.createConnection({
 });
 
 exports.getAllTags = function(callback) {
-	var queryString = squel.select().field("T.tagID").field("T.tagname").field("count(*)","count").from("tags", "T").join("interests", "I", "I.tagID = T.tagID").group('T.tagID').toString();
+	var queryString = squel.select().field("T.tagID").field("T.tagname").field("count(*)", "count").from("tags", "T").join("interests", "I", "I.tagID = T.tagID").group('T.tagID').toString();
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) {
 			return callback(err, undefined);
@@ -62,7 +62,7 @@ exports.addUser = function(user, callback) {
 		.set("platform", user.platform).toString();
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) {
-			return callback(err);
+			return callback(err, undefined);
 		}
 		var userId = rows.insertId;
 		var tagList = "";
@@ -78,9 +78,9 @@ exports.addUser = function(user, callback) {
 
 		connection.query(string, function(err, rows, fields) {
 			if (err) {
-				return callback(err);
+				return callback(err, undefined);
 			}
-			return callback(undefined);
+			return callback(undefined, rows.insertedId);
 		});
 	});
 }

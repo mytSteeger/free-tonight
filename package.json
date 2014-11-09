@@ -10,6 +10,8 @@
     "jade": "*",
     "express-validator": "*",
     "mysql": "*",
-    "squel": "*"
+    "squel": "*",
+    "apn": "*",
+    "node-gcm": "*"
   }
 }

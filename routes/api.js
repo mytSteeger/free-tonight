@@ -1,4 +1,5 @@
 var db = require('./db');
+var push = require('../lib/push');
 
 exports.tags = function(req, res) {
 	db.getAllTags(function(error, objects) {
@@ -83,13 +84,28 @@ exports.postTagsForUser = function(req, res) {
 			'platform': req.body.platform.toUpperCase(),
 			'tags': req.body.tags
 		};
-		return db.addUser(user, function(err) {
+		return db.addUser(user, function(err, userId) {
 			if (err) {
 				return res.send(500);
 			}
-			searchForMatches();
+			searchForMatches(userId, tags);
 			return res.send(204);
 		});
+	});
+}
+
+function searchForMatches(userId, tags) {
+	db.getTagIdNameAndCount(function(err, objects) {
+		if (err) {
+			console.error(err);
+		}
+		var userMatches = [];
+		objects.forEach(function(object) {
+			if (tags.indexOf(object.tagname) != -1) {
+				userMatches.push(object);
+			}
+		});
+		push.sendTagToUser(userId, userMatches);
 	});
 }
 
@@ -108,20 +124,7 @@ exports.matches = function(req, res) {
 		var result = objects.filter(function(object) {
 			return req.query.tags.indexOf(object.tagname) != -1;
 		});
-		console.log(req.query.tags);
-		console.log(objects);
-		console.log(result);
 		return res.send(200, result);
-	});
-}
-
-function searchForMatches() {
-	db.getTagIdNameAndCount(function(err, objects) {
-		if (err) {
-			console.error(err);
-		}
-		console.log("found some matches!!!");
-		console.log(objects);
 	});
 }
 
