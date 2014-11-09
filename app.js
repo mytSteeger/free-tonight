@@ -33,6 +33,9 @@ if ('development' == app.get('env')) {
 
 app.get('/api/', routes.index);
 
+//MATCHES
+app.get('/api/matches',api.matches);
+
 //TAGS
 app.get('/api/tags',api.tags);
 app.post('/api/:tagname',api.addTag);
@@ -40,6 +43,7 @@ app.post('/api/:tagname',api.addTag);
 //USER 
 app.get('/api/:token',api.user);
 app.post('/api/:token/tags',api.postTagsForUser);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

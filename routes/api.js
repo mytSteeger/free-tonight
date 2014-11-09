@@ -93,6 +93,28 @@ exports.postTagsForUser = function(req, res) {
 	});
 }
 
+exports.matches = function(req, res) {
+	req.checkQuery('tags', 'send at least 1 tag!').notEmpty();
+	var errors = req.validationErrors();
+
+	if (errors) {
+		return res.send(400, errors);
+	}
+
+	db.getTagIdNameAndCount(function(err, objects) {
+		if (err) {
+			return res.send(500, err);
+		}
+		var result = objects.filter(function(object) {
+			return req.query.tags.indexOf(object.tagname) != -1;
+		});
+		console.log(req.query.tags);
+		console.log(objects);
+		console.log(result);
+		return res.send(200, result);
+	});
+}
+
 function searchForMatches() {
 	db.getTagIdNameAndCount(function(err, objects) {
 		if (err) {
