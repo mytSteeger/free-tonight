@@ -9,7 +9,8 @@ var connection = mysql.createConnection({
 });
 
 exports.getAllTags = function(callback) {
-	var queryString = squel.select().field("T.tagID").field("T.tagname").field("count(*)", "count").from("tags", "T").join("interests", "I", "I.tagID = T.tagID").group('T.tagID').toString();
+	var queryString = squel.select().field("T.tagID").field("T.tagname").field("count(*)", "count").from("tags", "T").left_join("interests", "I", "I.tagID = T.tagID").group('T.tagID').toString();
+	console.log(queryString);
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) {
 			return callback(err, undefined);
