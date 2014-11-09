@@ -9,20 +9,12 @@ var connection = mysql.createConnection({
 });
 
 exports.getAllTags = function(callback) {
-	var queryString = squel.select().from('tags').toString();
+	var queryString = squel.select().field("T.tagID").field("T.tagname").field("count(*)","count").from("tags", "T").join("interests", "I", "I.tagID = T.tagID").group('T.tagID').toString();
 	connection.query(queryString, function(err, rows, fields) {
 		if (err) {
 			return callback(err, undefined);
 		}
-		var tags = rows.map(function(argument) {
-			return {
-				tagID: argument.tagID,
-				tagname: argument.tagname
-			};
-		});
-		console.log(tags);
-
-		return callback(undefined, tags);
+		return callback(undefined, rows);
 	});
 }
 
