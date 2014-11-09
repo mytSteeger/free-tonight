@@ -110,6 +110,7 @@ exports.tagsAndFollowerForUser = function(token, callback) {
 				});
 			}
 		}
+		
 		return callback(undefined, resultArray);
 	});
 }
